@@ -2,7 +2,7 @@ import { stringify } from "query-string";
 import sweetalert2 from "sweetalert2";
 // import { fire, enableLoading, close, disableLoading } from "sweetalert2";
 
-import mapboxgl, { Map, Popup } from "mapbox-gl";
+import mapboxgl, { Map, Popup, Point } from "mapbox-gl";
 import MapboxGeocoder from "./geocode";
 import { sortBy } from "lodash";
 import queryState from "querystate";
@@ -263,14 +263,14 @@ const selectLocation = async (id: string) => {
 };
 
 const onSelectLocation = async (id: string) => {
-  fire({
-    title: "Lädt…",
-    text:
-      "Verbindungen werden gesucht. Bei vielbefahrenen Stationen kann das bis zu 20 Sekunden dauern.",
-    onBeforeOpen: () => enableLoading(),
-    allowOutsideClick: false,
-    allowEscapeKey: false,
-  });
+  // fire({
+  //   title: "Lädt…",
+  //   text:
+  //     "Verbindungen werden gesucht. Bei vielbefahrenen Stationen kann das bis zu 20 Sekunden dauern.",
+  //   onBeforeOpen: () => enableLoading(),
+  //   allowOutsideClick: false,
+  //   allowEscapeKey: false,
+  // });
   // const div = document.createElement('span')
   // div.innerHTML = 'Bitte warten.'
   // const overlay = new PlainOverlay({ face: div }).show()
@@ -318,7 +318,7 @@ const resize = () => {
 resize();
 window.addEventListener("resize", resize);
 
-const toPoint = (station) => ({
+const toPoint = (station: RootObject) => ({
   center: [station.location.longitude, station.location.latitude],
   geometry: {
     type: "Point",
@@ -333,7 +333,7 @@ const toPoint = (station) => ({
   type: "Feature",
 });
 
-const isLongDistanceOrRegional = (s) => {
+const isLongDistanceOrRegional = (s: RootObject) => {
   return (
     s.products &&
     (s.products.nationalExp ||
@@ -344,19 +344,20 @@ const isLongDistanceOrRegional = (s) => {
   );
 };
 
-const isRegion = (s) => {
+const isRegion = (s: RootObject) => {
   return s.name.toUpperCase() === s.name;
 };
 
-const hasLocation = (s) => {
+const hasLocation = (s: RootObject) => {
   return !!s.location;
 };
 
 const options = {
   geocode: async (query) => {
-    const results = await fetch(
+    const results: RootObject[] = await fetch(
       `https://2.db.transport.rest/locations?query=${query}`
     ).then((res) => res.json());
+
     const filteredResults = results.filter(
       (x) => isLongDistanceOrRegional(x) && !isRegion(x) && hasLocation(x)
     );
@@ -373,7 +374,7 @@ map.addControl(geocoder);
 geocoder.on("result", (item) => {
   const { properties } = item.result;
   const id = formatStationId(properties.id);
-  queryState.set("origin", id);
+  // queryState.set("origin", id);
   onSelectLocation(id);
 });
 
@@ -381,3 +382,30 @@ map.on("load", () => {
   // const selectedOrigin = queryState.get("origin");
   // if (selectedOrigin) onSelectLocation(selectedOrigin);
 });
+
+export interface Location {
+  type: string;
+  latitude: number;
+  longitude: number;
+}
+
+export interface Products {
+  nationalExp: boolean;
+  national: boolean;
+  regionalExp: boolean;
+  regional: boolean;
+  suburban: boolean;
+  bus: boolean;
+  ferry: boolean;
+  subway: boolean;
+  tram: boolean;
+  taxi: boolean;
+}
+
+export interface RootObject {
+  type: string;
+  id: string;
+  name: string;
+  location: Location;
+  products: Products;
+}
