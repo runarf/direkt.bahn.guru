@@ -108,7 +108,7 @@ const selectLocation = async (id) => {
   const searchField = document.querySelector(
     '.mapboxgl-ctrl-geocoder input[type="text"]'
   );
-  searchField.setAttribute("placeholder", origin.name || "Station suchen…");
+  // searchField.setAttribute("placeholder", origin.name || "Station suchen…");
   // searchField.value = "";
   // searchField.blur();
   const pageTitle = document.querySelector("title");
