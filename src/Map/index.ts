@@ -9,9 +9,12 @@ import queryState from "querystate";
 import { Duration } from "luxon";
 import isUicLocationCode from "is-uic-location-code";
 
+import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
+import "mapbox-gl/dist/mapbox-gl.css";
+
 const { fire, close } = sweetalert2;
-let enableLoading;
-let disableLoading;
+let enableLoading: () => void;
+let disableLoading: () => void;
 
 const githubLink =
   '<b><a href="https://github.com/juliuste/direkt.bahn.guru">GitHub</a></b>';
@@ -81,7 +84,7 @@ const durationCategoryColour = (c) => {
   return "#999";
 };
 
-const buildLink = (origin, destination) => {
+const buildLink = (origin: { name: any }, destination: { name: any }) => {
   const query = {
     origin: origin.name,
     destination: destination.name,
@@ -112,7 +115,7 @@ const selectLocation = async (id: string) => {
   // searchField.blur();
   const pageTitle = document.querySelector("title");
   if (origin.name)
-    pageTitle.innerHTML = [origin.name, "🇪🇺 Zug-Direktverbindungen"].join(
+    pageTitle!.innerHTML = [origin.name, "🇪🇺 Zug-Direktverbindungen"].join(
       " | "
     );
   const stationFeature = {
@@ -125,7 +128,10 @@ const selectLocation = async (id: string) => {
       durationMinutes: 0,
     },
   };
-  const geojson = {
+  const geojson: {
+    type: string;
+    features: any[];
+  } = {
     type: "FeatureCollection",
     features: [],
   };
@@ -224,7 +230,7 @@ const selectLocation = async (id: string) => {
 
       map.on("mouseenter", "stations", (e) => {
         const coordinates: any = {}; // e.features[0].geometry.coordinates.slice();
-        const { name, duration, durationMinutes } = e.features[0].properties;
+        const { name, duration, durationMinutes } = e.features![0].properties;
 
         let durationElement = "";
         if (Number.isInteger(durationMinutes)) {
@@ -255,7 +261,7 @@ const selectLocation = async (id: string) => {
     });
 };
 
-const onSelectLocation = async (id) => {
+const onSelectLocation = async (id: string) => {
   fire({
     title: "Lädt…",
     text:
@@ -360,7 +366,7 @@ const options = {
   placeholder: "Station suchen…",
 };
 
-const geocoder = new MapboxGeocoder(options) as any;
+const geocoder = new MapboxGeocoder(options);
 map.addControl(geocoder);
 geocoder.on("result", (item) => {
   const { properties } = item.result;
