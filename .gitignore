@@ -1,7 +1,7 @@
 .DS_Store
 
 /.nvm-version
-/node_modules
+node_modules
 /npm-debug.log
 
 /shrinkwrap.yaml
@@ -10,5 +10,5 @@
 
 /deploy
 /assets/bundle.js
-
+guru
 yarn-error.log
