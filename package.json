@@ -18,8 +18,10 @@
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-scripts": "3.4.1",
+    "suggestions": "^1.7.0",
     "sweetalert2": "^9.13.1",
-    "typescript": "~3.7.2"
+    "typescript": "~3.7.2",
+    "xtend": "^4.0.2"
   },
   "scripts": {
     "start": "react-scripts start",
