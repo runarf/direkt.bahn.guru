@@ -3,7 +3,7 @@ import sweetalert2 from "sweetalert2";
 // import { fire, enableLoading, close, disableLoading } from "sweetalert2";
 
 import mapboxgl, { Map, Popup } from "mapbox-gl";
-import MapboxGeocoder from "./geocode";
+import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
 import { sortBy } from "lodash";
 import queryState from "querystate";
 import { Duration } from "luxon";
