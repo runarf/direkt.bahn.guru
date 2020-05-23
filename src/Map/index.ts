@@ -34,7 +34,6 @@ const map = new Map({
 const popup = new Popup({
   closeButton: false,
   closeOnClick: false,
-  maxWidth: null,
 });
 
 const formatStationId = (i) => {
@@ -42,7 +41,7 @@ const formatStationId = (i) => {
   return i;
 };
 
-const stationById = async (id) => {
+const stationById = async (id: string) => {
   const candidates = await fetch(
     `https://2.db.transport.rest/locations?query=${id}`
   ).then((res) => res.json());
@@ -98,7 +97,7 @@ const buildLink = (origin, destination) => {
   return `https://bahn.guru/calendar?${stringify(query)}`;
 };
 
-const selectLocation = async (id) => {
+const selectLocation = async (id: string) => {
   const origin = await stationById(id);
   if (!origin) {
     const error = new Error("Station not found.");
@@ -371,6 +370,6 @@ geocoder.on("result", (item) => {
 });
 
 map.on("load", () => {
-  const selectedOrigin = queryState.get("origin");
-  if (selectedOrigin) onSelectLocation(selectedOrigin);
+  // const selectedOrigin = queryState.get("origin");
+  // if (selectedOrigin) onSelectLocation(selectedOrigin);
 });
