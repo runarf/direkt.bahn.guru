@@ -4,11 +4,11 @@
 /node_modules
 /npm-debug.log
 
-/yarn.lock
 /shrinkwrap.yaml
-/package-lock.json
 
 /dist
 
 /deploy
 /assets/bundle.js
+
+yarn-error.log
