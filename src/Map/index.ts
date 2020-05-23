@@ -3,14 +3,15 @@ import sweetalert2 from "sweetalert2";
 // import { fire, enableLoading, close, disableLoading } from "sweetalert2";
 
 import mapboxgl, { Map, Popup } from "mapbox-gl";
-import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
+import MapboxGeocoder from "./geocode";
 import { sortBy } from "lodash";
 import queryState from "querystate";
 import { Duration } from "luxon";
 import isUicLocationCode from "is-uic-location-code";
 
-import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
+// import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
 import "mapbox-gl/dist/mapbox-gl.css";
+import "./geocode.css";
 
 const { fire, close } = sweetalert2;
 let enableLoading: () => void;
@@ -25,7 +26,7 @@ const _accessToken =
   "pk.eyJ1IjoianVsaXVzdGUiLCJhIjoiY2pxZWp2cmR4MXhnNDQ4bXl4ZDBnZ2psOCJ9.uAMKl_nPsY0O1VKU-9Sxtw";
 mapboxgl.accessToken = _accessToken;
 
-const map = new Map({
+const map: Map = new Map({
   container: "map",
   style: "mapbox://styles/mapbox/light-v9",
   zoom: 4.5,
@@ -34,7 +35,7 @@ const map = new Map({
   customAttribution: [impressumLink, githubLink],
 });
 
-const popup = new Popup({
+const popup: Popup = new Popup({
   closeButton: false,
   closeOnClick: false,
 });
@@ -364,9 +365,10 @@ const options = {
   accessToken: _accessToken,
   zoom: 4.5,
   placeholder: "Station suchen…",
+  mapboxgl,
 };
 
-const geocoder = new MapboxGeocoder(options);
+const geocoder = new MapboxGeocoder(options) as any;
 map.addControl(geocoder);
 geocoder.on("result", (item) => {
   const { properties } = item.result;
