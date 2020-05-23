@@ -1,23 +1,27 @@
-"use strict";
-/* global window */
-
-const { fetch } = require("fetch-ponyfill")();
 import { stringify } from "query-string";
-import { fire, enableLoading, close, disableLoading } from "sweetalert2";
-import { accessToken as _accessToken, Map, Popup } from "mapbox-gl";
+import sweetalert2 from "sweetalert2";
+// import { fire, enableLoading, close, disableLoading } from "sweetalert2";
+
+import mapboxgl, { Map, Popup } from "mapbox-gl";
 import MapboxGeocoder from "./geocode";
-import sortBy from "lodash/sortBy";
-const queryState = require("querystate")();
+import { sortBy } from "lodash";
+import queryState from "querystate";
 import { Duration } from "luxon";
 import isUicLocationCode from "is-uic-location-code";
+
+const { fire, close } = sweetalert2;
+let enableLoading;
+let disableLoading;
 
 const githubLink =
   '<b><a href="https://github.com/juliuste/direkt.bahn.guru">GitHub</a></b>';
 const impressumLink =
   '<b><a href="https://bahn.guru/impressum">Impressum</a></b>';
 
-_accessToken =
+const _accessToken =
   "pk.eyJ1IjoianVsaXVzdGUiLCJhIjoiY2pxZWp2cmR4MXhnNDQ4bXl4ZDBnZ2psOCJ9.uAMKl_nPsY0O1VKU-9Sxtw";
+mapboxgl.accessToken = _accessToken;
+
 const map = new Map({
   container: "map",
   style: "mapbox://styles/mapbox/light-v9",
@@ -98,15 +102,15 @@ const selectLocation = async (id) => {
   const origin = await stationById(id);
   if (!origin) {
     const error = new Error("Station not found.");
-    error.code = "STATION_NOT_FOUND";
+    // error.code = "STATION_NOT_FOUND";
     throw error;
   }
   const searchField = document.querySelector(
     '.mapboxgl-ctrl-geocoder input[type="text"]'
   );
   searchField.setAttribute("placeholder", origin.name || "Station suchen…");
-  searchField.value = "";
-  searchField.blur();
+  // searchField.value = "";
+  // searchField.blur();
   const pageTitle = document.querySelector("title");
   if (origin.name)
     pageTitle.innerHTML = [origin.name, "🇪🇺 Zug-Direktverbindungen"].join(
@@ -164,7 +168,7 @@ const selectLocation = async (id) => {
       if (map.getLayer("stations")) map.removeLayer("stations");
       if (map.getSource("stations")) map.removeSource("stations");
 
-      map.addSource("stations", source);
+      // map.addSource("stations", source);
       map.addLayer({
         id: "stations",
         type: "circle",
@@ -220,7 +224,7 @@ const selectLocation = async (id) => {
       });
 
       map.on("mouseenter", "stations", (e) => {
-        const coordinates = e.features[0].geometry.coordinates.slice();
+        const coordinates: any = {}; // e.features[0].geometry.coordinates.slice();
         const { name, duration, durationMinutes } = e.features[0].properties;
 
         let durationElement = "";
@@ -246,7 +250,7 @@ const selectLocation = async (id) => {
 
       if (resultsWithLocations.length === 0) {
         const error = new Error("No results found.");
-        error.code = "NO_RESULTS";
+        // error.code = "NO_RESULTS";
         throw error;
       }
     });
@@ -342,7 +346,7 @@ const hasLocation = (s) => {
   return !!s.location;
 };
 
-const geocoder = new MapboxGeocoder({
+const options = {
   geocode: async (query) => {
     const results = await fetch(
       `https://2.db.transport.rest/locations?query=${query}`
@@ -355,7 +359,9 @@ const geocoder = new MapboxGeocoder({
   accessToken: _accessToken,
   zoom: 4.5,
   placeholder: "Station suchen…",
-});
+};
+
+const geocoder = new MapboxGeocoder(options) as any;
 map.addControl(geocoder);
 geocoder.on("result", (item) => {
   const { properties } = item.result;

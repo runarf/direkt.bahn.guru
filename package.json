@@ -8,6 +8,7 @@
 	"license": "ISC",
 	"author": "Julius Tens <mail@juliustens.eu>",
 	"scripts": {
+		"start": "http-server .",
 		"build": "tsc",
 		"check-deps": "depcheck . --ignore-dirs=assets --ignores=browserify,acorn",
 		"fix": "eslint --fix lib",
@@ -15,6 +16,7 @@
 		"test": "npm run lint && npm run check-deps && npm run build"
 	},
 	"dependencies": {
+		"@types/lodash": "^4.14.152",
 		"@types/luxon": "^1.24.0",
 		"@types/mapbox-gl": "^1.10.2",
 		"acorn": "^7.1.0",
